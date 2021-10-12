@@ -23,8 +23,8 @@ function restricted(req, res, next) {
 async function checkUsernameFree(req, res, next) {
   try {
     const { username } = req.body;
-    const [foundUser] = await User.findBy({ username });
-    console.log(foundUser);
+    const [foundUser] = await User.findBy({ username: username });
+
     if (!foundUser) {
       next();
     } else {
@@ -44,8 +44,19 @@ async function checkUsernameFree(req, res, next) {
     "message": "Invalid credentials"
   }
 */
-function checkUsernameExists(req, res, next) {
-  next();
+async function checkUsernameExists(req, res, next) {
+  try {
+
+    const { username } = req.body;
+    const [foundUser] = await User.findBy({ username: username });
+    if (foundUser) {
+      next();
+    } else {
+      next({ status: 401, message: 'Invalid credentials' });
+    }
+  } catch (error) {
+    next(error);
+  }
 }
 
 /*
@@ -57,7 +68,18 @@ function checkUsernameExists(req, res, next) {
   }
 */
 function checkPasswordLength(req, res, next) {
-  next();
+
+  try {
+
+    const { password } = req.body;
+    if (password.length <= 3 || !password) {
+      next({ status: 422, message: 'Password must be longer than 3 chars' });
+    } else {
+      next();
+    }
+  } catch (error) {
+    next(error);
+  }
 }
 module.exports = {
   restricted,
