@@ -50,6 +50,7 @@ async function checkUsernameExists(req, res, next) {
     const { username } = req.body;
     const [foundUser] = await User.findBy({ username: username });
     if (foundUser) {
+      req.user = foundUser
       next();
     } else {
       next({ status: 401, message: 'Invalid credentials' });

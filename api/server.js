@@ -22,7 +22,7 @@ const Store = require('connect-session-knex')(session);
 const server = express();
 
 server.use(session({
-  nane: 'chocolatechip',
+  name: 'chocolatechip',
   secret: "shh",
   saveUninitialized: false,
   resave: false,

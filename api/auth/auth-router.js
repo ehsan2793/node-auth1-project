@@ -61,8 +61,17 @@ router.post(
     "message": "Invalid credentials"
   }
  */
-router.post('/login', checkUsernameExists, (req, res) => {
-  res.status(200).json({ message: `Welcome ${req.body.username}` });
+router.post('/login', checkUsernameExists, (req, res, next) => {
+  const { password } = req.body
+  if (bycrypt.compareSync(password, req.user.password)) {
+    req.session.user = req.user;
+    res.status(200).json({ message: `Welcome ${req.body.username}!` });
+  } else {
+    next({
+      status: 401, message: 'Invalid credentials'
+    })
+  }
+
 });
 
 /**
